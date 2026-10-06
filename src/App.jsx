@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
 import { Card } from "./components/Card";
-import { GameHeader } from "./components/GameHeader"
+import { GameHeader } from "./components/GameHeader";
+import { WinMessage } from "./components/WinMessage.jsx";
+import { useGameLogic } from "./hooks/useGameLogic";
 
 const cardValues = [
   "🍎",
@@ -21,38 +22,29 @@ const cardValues = [
   "🍒",
 ];
 
-
 function App() {
-
-  const [cards, setCards] = useState([]);
-
-  const initialiseGame = () => {
-
-    const finalCards = cardValues.map((value, index) => ({
-      id:index,
-      value,
-      isFlipped: false,
-      isMatched: false
-    }));
-
-    setCards(finalCards);
-
-  };
-
-  useEffect(() => {
-    initialiseGame();
-  }, []);
-
+  const {
+    cards,
+    score,
+    moves,
+    handleCardClick,
+    initializeGame,
+    isGameComplete,
+  } = useGameLogic(cardValues);
 
   return (
-    <div className="app"><GameHeader score={3} moves={10}/>
+    <div className="app">
+      <GameHeader score={score} moves={moves} onReset={initializeGame} />
+
+      {isGameComplete && <WinMessage moves={moves} />}
+
       <div className="cards-grid">
-        {cardValues.map((card) => (
-          <Card card={card}/>
-         ))}
+        {cards.map((card) => (
+          <Card card={card} onClick={handleCardClick} />
+        ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
